@@ -20,7 +20,7 @@ public class Game {
         state = 0;
     }
 
-    public String current() {
+    public synchronized String current() {
         if (isFizzBuzz()) {
             return "fizz buzz";
         }
@@ -45,22 +45,15 @@ public class Game {
         return state % 5 == 0;
     }
 
-    public boolean turn(String turn) {
+    public synchronized boolean turn(String turn) {
         if (!isActive()) {
             throw new IllegalTurnException("It is impossible to process a turn - the game is already over");
         }
-        next();
+        state++;
         if (current().equalsIgnoreCase(turn.strip())) {
             return true;
         }
-        finish();
-        return false;
-    }
-
-    private synchronized void next() {
-        state++;
-    }
-    private synchronized void finish() {
         active = false;
+        return false;
     }
 }
